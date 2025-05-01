@@ -4,10 +4,7 @@ on:
   pull_request:
     branches:
       - main
-
-env:
-  # Docker settings
-  DOCKER_IMAGE: qgis/qgis
+      - "ci/*"
 
 jobs:
   Test-plugin:
@@ -15,7 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        docker_tags: [release-3_34]
+        config:
+          - { image: qgis/qgis, tag: release-3_34 }
+          - { image: ghcr.io/qgis/qgis-qt6-unstable, tag: main }
 
     steps:
       - name: Checkout
@@ -28,8 +27,8 @@ jobs:
 
       - name: Docker pull and create qgis-testing-environment
         run: |
-          docker pull "$DOCKER_IMAGE":${{ matrix.docker_tags }}
-          docker run -d --name qgis-testing-environment -v .:/tests_directory/plugin_dir -e DISPLAY=:99 "$DOCKER_IMAGE":${{ matrix.docker_tags }}
+          docker pull ${{ matrix.config.tag }}:${{ matrix.config.tag }}
+          docker run -d --name qgis-testing-environment -v .:/tests_directory/plugin_dir -e DISPLAY=:99 ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
       - name: Docker set up QGIS
         run: |
