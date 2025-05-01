@@ -29,7 +29,7 @@ jobs:
 
       - name: Docker pull and create qgis-testing-environment
         run: |
-          docker pull ${{ matrix.config.tag }}:${{ matrix.config.tag }}
+          docker pull ${{ matrix.config.image }}:${{ matrix.config.tag }}
           docker run -d --name qgis-testing-environment -v .:/tests_directory/plugin_dir -e DISPLAY=:99 ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
       - name: Docker set up QGIS
